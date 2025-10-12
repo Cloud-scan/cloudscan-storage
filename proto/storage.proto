@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package cloudscan.storage;
+
+option go_package = "github.com/cloudscan/cloudscan-storage/proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// StorageService manages artifact storage
+service StorageService {
+  rpc CreateArtifact(CreateArtifactRequest) returns (CreateArtifactResponse);
+  rpc GetArtifact(GetArtifactRequest) returns (GetArtifactResponse);
+  rpc DeleteArtifact(DeleteArtifactRequest) returns (google.protobuf.Empty);
+  rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse);
+}
+
+// Artifact represents a stored file/object
+message Artifact {
+  string id = 1;
+  string scan_id = 2;
+  string organization_id = 3;
+  ArtifactType type = 4;
+  string filename = 5;
+  int64 size_bytes = 6;
+  string content_type = 7;
+  string storage_path = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp expires_at = 10;
+}
+
+// ArtifactType represents the type of artifact
+enum ArtifactType {
+  ARTIFACT_TYPE_UNSPECIFIED = 0;
+  SOURCE_CODE = 1;      // Source code archive
+  SCAN_RESULTS = 2;     // Raw scanner output (JSON/SARIF)
+  REPORT = 3;           // Generated PDF/HTML reports
+  LOG = 4;              // Scan execution logs
+}
+
+// CreateArtifactRequest - Get presigned upload URL
+message CreateArtifactRequest {
+  string scan_id = 1;
+  string organization_id = 2;
+  ArtifactType type = 3;
+  string filename = 4;
+  string content_type = 5;
+  int64 size_bytes = 6;
+  int32 expires_in_hours = 7; // Default: 24 hours
+}
+
+// CreateArtifactResponse - Returns presigned upload URL
+message CreateArtifactResponse {
+  Artifact artifact = 1;
+  string upload_url = 2;       // Presigned URL for upload
+  map<string, string> upload_headers = 3; // Required headers for upload
+}
+
+// GetArtifactRequest - Get presigned download URL
+message GetArtifactRequest {
+  string id = 1;
+  int32 expires_in_hours = 2; // Default: 1 hour
+}
+
+// GetArtifactResponse - Returns presigned download URL
+message GetArtifactResponse {
+  Artifact artifact = 1;
+  string download_url = 2;    // Presigned URL for download
+}
+
+// DeleteArtifactRequest
+message DeleteArtifactRequest {
+  string id = 1;
+}
+
+// ListArtifactsRequest
+message ListArtifactsRequest {
+  string scan_id = 1;
+  string organization_id = 2;
+  ArtifactType type = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+// ListArtifactsResponse
+message ListArtifactsResponse {
+  repeated Artifact artifacts = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
