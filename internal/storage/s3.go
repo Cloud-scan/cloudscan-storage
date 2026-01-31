@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cloudscan/cloudscan-storage/internal/config"
-	"github.com/cloudscan/cloudscan-storage/internal/domain"
-	"github.com/cloudscan/cloudscan-storage/internal/interfaces"
+	"github.com/cloud-scan/cloudscan-storage/internal/config"
+	"github.com/cloud-scan/cloudscan-storage/internal/domain"
+	"github.com/cloud-scan/cloudscan-storage/internal/interfaces"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	log "github.com/sirupsen/logrus"

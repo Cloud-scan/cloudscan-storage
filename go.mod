@@ -1,4 +1,4 @@
-module github.com/cloudscan/cloudscan-storage
+module github.com/cloud-scan/cloudscan-storage
 
 go 1.24.0
 

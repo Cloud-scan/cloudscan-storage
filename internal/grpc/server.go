@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 
-	pb "github.com/cloudscan/cloudscan-storage/generated/proto"
+	pb "github.com/cloud-scan/cloudscan-storage/generated/proto"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

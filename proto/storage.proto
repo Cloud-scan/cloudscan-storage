@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package cloudscan.storage;
 
-option go_package = "github.com/cloudscan/cloudscan-storage/generated/proto";
+option go_package = "github.com/cloud-scan/cloudscan-storage/generated/proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";

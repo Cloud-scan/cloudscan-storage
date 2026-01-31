@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/cloudscan/cloudscan-storage/internal/domain"
-	"github.com/cloudscan/cloudscan-storage/internal/interfaces"
+	"github.com/cloud-scan/cloudscan-storage/internal/domain"
+	"github.com/cloud-scan/cloudscan-storage/internal/interfaces"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )

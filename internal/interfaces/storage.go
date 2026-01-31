@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/cloudscan/cloudscan-storage/internal/domain"
+	"github.com/cloud-scan/cloudscan-storage/internal/domain"
 )
 
 // StorageBackend defines the interface for object storage operations

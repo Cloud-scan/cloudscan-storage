@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/cloudscan/cloudscan-storage/internal/domain"
-	"github.com/cloudscan/cloudscan-storage/internal/interfaces"
-	pb "github.com/cloudscan/cloudscan-storage/generated/proto"
+	"github.com/cloud-scan/cloudscan-storage/internal/domain"
+	"github.com/cloud-scan/cloudscan-storage/internal/interfaces"
+	pb "github.com/cloud-scan/cloudscan-storage/generated/proto"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"

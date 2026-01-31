@@ -9,11 +9,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/cloudscan/cloudscan-storage/internal/config"
-	"github.com/cloudscan/cloudscan-storage/internal/database"
-	grpcserver "github.com/cloudscan/cloudscan-storage/internal/grpc"
-	"github.com/cloudscan/cloudscan-storage/internal/interfaces"
-	"github.com/cloudscan/cloudscan-storage/internal/storage"
+	"github.com/cloud-scan/cloudscan-storage/internal/config"
+	"github.com/cloud-scan/cloudscan-storage/internal/database"
+	grpcserver "github.com/cloud-scan/cloudscan-storage/internal/grpc"
+	"github.com/cloud-scan/cloudscan-storage/internal/interfaces"
+	"github.com/cloud-scan/cloudscan-storage/internal/storage"
 	log "github.com/sirupsen/logrus"
 )
 
