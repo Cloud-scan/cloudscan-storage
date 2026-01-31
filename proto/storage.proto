@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package cloudscan.storage;
 
-option go_package = "github.com/cloudscan/cloudscan-storage/proto";
+option go_package = "github.com/cloudscan/cloudscan-storage/generated/proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
@@ -13,6 +13,16 @@ service StorageService {
   rpc GetArtifact(GetArtifactRequest) returns (GetArtifactResponse);
   rpc DeleteArtifact(DeleteArtifactRequest) returns (google.protobuf.Empty);
   rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse);
+
+  // Multipart upload support for large files
+  rpc InitiateMultipartUpload(InitiateMultipartRequest)
+      returns (InitiateMultipartResponse);
+  rpc GetMultipartUploadParts(GetMultipartPartsRequest)
+      returns (GetMultipartPartsResponse);
+  rpc CompleteMultipartUpload(CompleteMultipartRequest)
+      returns (CompleteMultipartResponse);
+  rpc AbortMultipartUpload(AbortMultipartRequest)
+      returns (google.protobuf.Empty);
 }
 
 // Artifact represents a stored file/object
@@ -32,10 +42,10 @@ message Artifact {
 // ArtifactType represents the type of artifact
 enum ArtifactType {
   ARTIFACT_TYPE_UNSPECIFIED = 0;
-  SOURCE_CODE = 1;      // Source code archive
-  SCAN_RESULTS = 2;     // Raw scanner output (JSON/SARIF)
-  REPORT = 3;           // Generated PDF/HTML reports
-  LOG = 4;              // Scan execution logs
+  SOURCE_CODE = 1;   // Source code archive
+  SCAN_RESULTS = 2;  // Raw scanner output (JSON/SARIF)
+  REPORT = 3;        // Generated PDF/HTML reports
+  LOG = 4;           // Scan execution logs
 }
 
 // CreateArtifactRequest - Get presigned upload URL
@@ -46,26 +56,26 @@ message CreateArtifactRequest {
   string filename = 4;
   string content_type = 5;
   int64 size_bytes = 6;
-  int32 expires_in_hours = 7; // Default: 24 hours
+  int32 expires_in_hours = 7;  // Default: 24 hours
 }
 
 // CreateArtifactResponse - Returns presigned upload URL
 message CreateArtifactResponse {
   Artifact artifact = 1;
-  string upload_url = 2;       // Presigned URL for upload
-  map<string, string> upload_headers = 3; // Required headers for upload
+  string upload_url = 2;                   // Presigned URL for upload
+  map<string, string> upload_headers = 3;  // Required headers for upload
 }
 
 // GetArtifactRequest - Get presigned download URL
 message GetArtifactRequest {
   string id = 1;
-  int32 expires_in_hours = 2; // Default: 1 hour
+  int32 expires_in_hours = 2;  // Default: 1 hour
 }
 
 // GetArtifactResponse - Returns presigned download URL
 message GetArtifactResponse {
   Artifact artifact = 1;
-  string download_url = 2;    // Presigned URL for download
+  string download_url = 2;  // Presigned URL for download
 }
 
 // DeleteArtifactRequest
@@ -87,4 +97,61 @@ message ListArtifactsResponse {
   repeated Artifact artifacts = 1;
   string next_page_token = 2;
   int32 total_count = 3;
+}
+
+// Multipart upload messages
+
+// InitiateMultipartRequest
+message InitiateMultipartRequest {
+  string artifact_id = 1;
+}
+
+// InitiateMultipartResponse
+message InitiateMultipartResponse {
+  string upload_id = 1;
+}
+
+// GetMultipartPartsRequest
+message GetMultipartPartsRequest {
+  string artifact_id = 1;
+  string upload_id = 2;
+  int32 from_part = 3;  // Starting part number (1-based)
+  int32 num_parts = 4;  // Number of parts to get URLs for
+}
+
+// GetMultipartPartsResponse
+message GetMultipartPartsResponse {
+  repeated UploadPart parts = 1;
+}
+
+// UploadPart represents a presigned URL for a multipart upload part
+message UploadPart {
+  int32 part_number = 1;
+  string url = 2;
+  string expiration = 3;
+}
+
+// CompleteMultipartRequest
+message CompleteMultipartRequest {
+  string artifact_id = 1;
+  string upload_id = 2;
+  repeated CompletedPart parts = 3;
+}
+
+// CompletedPart represents a completed upload part with its ETag
+message CompletedPart {
+  int32 part_number = 1;
+  string etag = 2;
+}
+
+// CompleteMultipartResponse
+message CompleteMultipartResponse {
+  string url = 1;
+  string expiration = 2;
+}
+
+// AbortMultipartRequest
+message AbortMultipartRequest {
+  string artifact_id = 1;
+  string upload_id = 2;
 }
