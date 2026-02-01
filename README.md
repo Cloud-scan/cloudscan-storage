@@ -12,7 +12,7 @@ Provides unified API for:
 - **Azure Blob Storage**
 
 **Features:**
-- Presigned URL generation (upload/download)
+- Presigned URL generation (upload/download) 
 - Multipart upload support for large files
 - Artifact metadata tracking in PostgreSQL
 - Automatic expiration and cleanup
