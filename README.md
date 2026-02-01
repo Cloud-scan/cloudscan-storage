@@ -16,7 +16,7 @@ Provides unified API for:
 - Multipart upload support for large files
 - Artifact metadata tracking in PostgreSQL
 - Automatic expiration and cleanup
-- Storage backend abstraction
+- Storage backend abstraction 
 
 ---
 
