@@ -22,6 +22,61 @@ Provides unified API for:
 
 ## 🏗️ Architecture
 
+### Service Interactions
+
+```
+┌─────────────────┐              ┌─────────────────┐
+│   UI (React)    │              │  Orchestrator   │
+└────────┬────────┘              └────────┬────────┘
+         │                                │
+         │ 1. CreateArtifact()            │ 2. GetArtifact()
+         │    (get upload URL)            │    (get download URL)
+         ▼                                ▼
+┌──────────────────────────────────────────────────┐
+│          Storage Service (This)                  │
+│                                                  │
+│  ┌────────────────┐       ┌──────────────────┐  │
+│  │  gRPC Server   │       │  PostgreSQL      │  │
+│  │  (Port 8082)   │◀─────▶│  (Artifact Meta) │  │
+│  └────────┬───────┘       └──────────────────┘  │
+│           │                                      │
+│           ▼                                      │
+│  ┌─────────────────────────────────────────┐    │
+│  │    Storage Backend Abstraction          │    │
+│  │                                          │    │
+│  │  ┌──────────┐  ┌──────┐  ┌──────────┐  │    │
+│  │  │   S3     │  │ GCS  │  │  Azure   │  │    │
+│  │  │ (Active) │  │(Stub)│  │  (Stub)  │  │    │
+│  │  └──────────┘  └──────┘  └──────────┘  │    │
+│  └─────────┬───────────────────────────────┘    │
+└────────────┼──────────────────────────────────┘
+             │
+             │ 3. Generate presigned URLs
+             ▼
+┌──────────────────────────────────────┐
+│  S3-Compatible Object Storage        │
+│  - AWS S3                            │
+│  - MinIO                             │
+│  - DigitalOcean Spaces               │
+│  - Wasabi                            │
+└─────┬───────────────┬────────────────┘
+      │               │
+      │ 4. Upload     │ 5. Download
+      │    (UI)       │    (Runner)
+      ▼               ▼
+┌────────┐      ┌──────────┐
+│   UI   │      │  Runner  │
+└────────┘      └──────────┘
+```
+
+**Key Points:**
+- Storage service NEVER touches actual file data
+- Only generates presigned URLs for direct S3 access
+- UI/Runner communicate with S3 directly
+- Storage service only tracks artifact metadata
+
+### Code Structure
+
 ```
 cloudscan-storage
 ├── cmd/

@@ -42,40 +42,11 @@ func NewPostgresDB(dsn string, maxConns, minConns int) (*DB, error) {
 func RunMigrations(db *sql.DB, migrationsPath string) error {
 	log.WithField("path", migrationsPath).Info("Running database migrations")
 
-	// For now, we'll execute migrations inline
-	// In production, use a migration tool like golang-migrate
+	// Database migrations are handled externally via Kubernetes migration job
+	// See migrations/001_initial_schema.up.sql
+	// In production, use a migration tool like golang-migrate or goose
 
-	migrations := []string{
-		`
-		CREATE TABLE IF NOT EXISTS artifacts (
-			id UUID PRIMARY KEY,
-			scan_id UUID NOT NULL,
-			organization_id UUID NOT NULL,
-			type VARCHAR(50) NOT NULL,
-			filename VARCHAR(500) NOT NULL,
-			size_bytes BIGINT NOT NULL DEFAULT 0,
-			content_type VARCHAR(100),
-			storage_path VARCHAR(1000) NOT NULL,
-			created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-			expires_at TIMESTAMP WITH TIME ZONE,
-			deleted_at TIMESTAMP WITH TIME ZONE,
-			INDEX idx_artifacts_scan_id (scan_id),
-			INDEX idx_artifacts_org_id (organization_id),
-			INDEX idx_artifacts_type (type),
-			INDEX idx_artifacts_expires_at (expires_at) WHERE deleted_at IS NULL,
-			INDEX idx_artifacts_deleted_at (deleted_at)
-		);
-		`,
-	}
-
-	for i, migration := range migrations {
-		log.WithField("migration", i+1).Debug("Executing migration")
-		if _, err := db.Exec(migration); err != nil {
-			return fmt.Errorf("migration %d failed: %w", i+1, err)
-		}
-	}
-
-	log.Info("Database migrations completed successfully")
+	log.Info("Database migrations completed (migrations handled externally)")
 	return nil
 }
 
