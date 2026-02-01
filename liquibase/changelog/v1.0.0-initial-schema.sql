@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset cloudscan:1 labels:v1.0.0 context:schema
+--changeset cloudscan:1 labels:v1.0.0 context:schema splitStatements:false
 --comment: CloudScan Storage - Initial Schema
 
 -- Enable UUID extension
